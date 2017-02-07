@@ -164,6 +164,7 @@ def martini_lipidome():
 
 def write_martini_landscape():
 	"""
+	WILL BE REMOVED IN PLACE OF LANDSCAPE OBJECT IN AMX/FFTOOLS ... !!!
 	"""
 	#---note that the following is hardcoded and lipids are autodetected
 	land = {'objects':{},'alias':{}}
