@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 
 # EDITABLE SECTIONS ARE MARKED WITH #@#
@@ -2171,7 +2171,6 @@ def option_parser(args, options, lists, version=0):
     options['ElasticDecayPower']   = options['-ep'].value
     options['ElasticBeads']        = options['-eb'].value.split(',')
     options['PosResForce']         = options['-pf'].value
-
     options['PosRes']              = [i.lower() for i in options['-p'].value.split(",")]
     if "none"     in options['PosRes']: options['PosRes'] = []
     if "backbone" in options['PosRes']: options['PosRes'].append("BB")
@@ -2467,7 +2466,9 @@ class CoarseGrained(object):
 # coordinates and the list of ids mapped to this bead
 def aver(b):
     mwx, ids = list(zip(*[((m*x, m*y, m*z), i) for m, (x, y, z), i in b]))      # Weighted coordinates
-    tm  = sum(next(zip(*b)))                                                 # Sum of weights
+    #---rpb intervenes for backwards compatibility to python2
+    if sys.version_info<(3,0): tm = sum([i[0] for i in b])
+    else: tm  = sum(next(zip(*b)))                                                 # Sum of weights
     return [sum(i)/tm for i in zip(*mwx)], ids                            # Centre of mass
 
 
@@ -2878,7 +2879,7 @@ def getChargeType(resname, resid, choices):
         print('%s. %s' % (i, choice))
     choice = None
     while choice not in list(choices.keys()):
-        choice = eval(input('Type a number:'))
+        choice = eval(str(input('Type a number:')))
     return choices[choice]
 
 
@@ -2966,8 +2967,8 @@ def residues(atomList):
 def residueDistance2(r1, r2):
     return min([distance2(i, j) for i in r1 for j in r2])
 
-
-def breaks(residuelist, selection=("N", "CA", "C"), cutoff=2.5):
+#---rpb hacked the cutoff
+def breaks(residuelist, selection=("N", "CA", "C"), cutoff=5.0):
     # Extract backbone atoms coordinates
     bb = [[atom[4:] for atom in residue if atom[0] in selection] for residue in residuelist]
     # Needed to remove waters residues from mixed residues.
@@ -3862,7 +3863,10 @@ class Topology(object):
 
         # Backbone bead atom IDs
         bbid = [startAtom]
-        for i in next(zip(*sc)):
+        #---rpb adds python2 backwards compatibility
+        if sys.version_info<(3,0): over = list(zip(*sc))[0]
+        else: over = next(zip(*sc))
+        for i in over:
             bbid.append(bbid[-1]+len(i)+1)
 
         # Calpha positions, to get Elnedyn BBB-angles and BB-bond lengths
@@ -4431,7 +4435,8 @@ def main(options):
         # Can be easily expanded to residues other than HIS
         for chain in chains:
             for i, resname in enumerate(chain.sequence):
-                if resname == 'HIS' and options['chHIS']:
+                #---rpb backwards python2 we must check value instead of just "and options['chHIS']"
+                if resname == 'HIS' and options['chHIS'].value==True:
                     choices = {0: 'HIH', 1: 'HIS'}
                     choice = getChargeType(resname, i, choices)
                     chain.sequence[i] = choice
@@ -4793,7 +4798,8 @@ Martini system from %s
     # The following lines are always printed (if no errors occur).
     print("\n\tThere you are. One MARTINI. Shaken, not stirred.\n")
     Q = martiniq.pop(random.randint(0, len(martiniq)-1))
-    print("\n", Q[1], "\n%80s" % ("--"+Q[0]), "\n")
+    #---rpb disables because it's annoying me in python 2 print("\n", Q[1], "\n%80s" % ("--"+Q[0]), "\n")
+    #---rpb wants python2 because backward.py also requires it so SHRUG
 if __name__ == '__main__':
     import sys, logging
     args = sys.argv[1:]
