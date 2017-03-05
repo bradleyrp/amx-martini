@@ -132,6 +132,10 @@ wants:|{
 		'restraints':{'martini_glycerol':1000},
 		'naming':'alternate','which':'lipids'
 		},
+	'martini_prison.ff':{
+		'restraints':{'martini_glycerol':1000,'martini_tails':1000},
+		'naming':'alternate_both','which':'lipids'
+		},
 	}
 
 """},
