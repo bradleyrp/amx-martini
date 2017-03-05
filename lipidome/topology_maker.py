@@ -45,18 +45,28 @@ def transform_itp(itp_fn,specs):
 				if 'martini_glycerol' in specs['restraints']:
 					atom_name = 'GL1'
 					atoms = [i['atom'] for i in mol_spec['atoms']]
-					posres_all[atoms.index(atom_name)]['fcz'] = specs['restraints']['martini_glycerol']
+					for key,value in specs['restraints']['martini_glycerol'].items():
+						if key not in 'xyz': raise Exception('restraints, martini_glycerol keys must be in xyz')
+						posres_all[atoms.index(atom_name)]['fc%s'%key] = value
 				if 'martini_tails' in specs['restraints']:
 					for atom_name in tail_names: 
 						atoms = [i['atom'] for i in mol_spec['atoms']]
-						posres_all[atoms.index(atom_name)]['fcz'] = specs['restraints']['martini_glycerol']
+						for key,value in specs['restraints']['martini_glycerol'].items():
+							if key not in 'xyz': raise Exception('restraints, martini_glycerol keys must be in xyz')
+							posres_all[atoms.index(atom_name)]['fc%s'%key] = value
+				#---in some cases we want to restrain both the alternate group and the original
+				#---...so we apply position restraints to the original here, and later copy it to the alternate
+				if specs['naming']=='alternate_restrain_both':
+					itp.molecules[mol]['position_restraints'] = posres_all	
 				if specs['naming']=='same': mol_name = mol
-				elif specs['naming']=='alternate': 
+				elif specs['naming'] in ['alternate','alternate_restrain_both']: 
 					if len(mol)>4: raise Exception('name %s is too long. cannot make an alternate'%mol)
 					mol_name = mol+'R'
 					if mol_name in itp.molecules:
 						raise Exception(
 							'alternate for %s is %s but that is already in the molecules list'%(mol,mol_name))
+					#---in the alternate scheme we make two copies of the lipid, 
+					#---...and the "R"-suffixed has the restraints
 					itp.molecules[mol_name] = deepcopy(itp.molecules[mol])
 					#---apply the name in the correct entries
 					#---this is important since the molname and resname are different items
@@ -64,6 +74,7 @@ def transform_itp(itp_fn,specs):
 					for a in itp.molecules[mol_name]['atoms']:
 						a['resname'] = mol_name
 				else: raise Exception('unclear naming scheme')
+				#---apply the position restraints we generated above
 				itp.molecules[mol_name]['position_restraints'] = posres_all
 	else: raise Exception('transform_itp cannot processes specs keys: "%s"'%specs.keys())
 	return itp

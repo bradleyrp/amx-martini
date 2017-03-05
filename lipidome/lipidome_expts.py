@@ -125,12 +125,16 @@ deposit site: inputs/martini/auto_ff                 # where to write new force 
 #---specify transformed force field copies
 wants:|{
 	'martini_upright.ff':{
-		'restraints':{'martini_glycerol':100,'martini_tails':100},
+		'restraints':{'martini_glycerol':{'z':100},'martini_tails':{'z':100}},
 		'naming':'same','which':'lipids'
 		},
 	'martini_upright_alt.ff':{
-		'restraints':{'martini_glycerol':1000},
+		'restraints':{'martini_glycerol':{'z':1000}},
 		'naming':'alternate','which':'lipids'
+		},
+	'martini_prison.ff':{
+		'restraints':{'martini_glycerol':{'z':1000},'martini_tails':{'z':1000}},
+		'naming':'alternate_restrain_both','which':'lipids'
 		},
 	}
 
