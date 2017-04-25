@@ -4451,11 +4451,13 @@ def main(options):
 
         ## SECONDARY STRUCTURE
         ss = ''
-        if options['Collagen']:
+        #---rpb intervenes below for 2to3 cross-compatibility. __bool__ is __nonzero__ in 2.
+        #---...note that the syntax shorthand "if Object" is probably not worth it if you want 2 and 3 ...
+        if options['Collagen'].__bool__():
             for chain in chains:
                 chain.set_ss("F")
                 ss += chain.ss
-        elif options["-ss"]:
+        elif options["-ss"].__bool__():
             # XXX We need error-catching here,
             # in case the file doesn't excist, or the string contains bogus.
             # If the string given for the sequence consists strictly of upper case letters
