@@ -13,7 +13,12 @@ def martinize():
 	cmd = 'python '+os.path.abspath(martinize_fn)+' -v -p backbone '
 	#---! write a separate position restrained version if desired by dropping -p None
 	cmd += ' -f protein-start.pdb -o %s.top -x %s.pdb '%(name,name)
-	if state.dssp_path: cmd += ' -dssp %s'%os.path.abspath(os.path.expanduser(state.dssp_path))
+	#---dssp use should be standard for MARTINI proteins
+	if state.dssp_path: 
+		dssp_fn = os.path.abspath(os.path.expanduser(state.dssp_path))
+		if not os.path.isfile(dssp_fn):
+			raise Exception('cannot find %s'%dssp_fn)
+		cmd += ' -dssp %s'%dssp_fn
 	if state.martinize_ff_version: cmd += ' -ff %s'%state.martinize_ff_version
 	if state.martinize_flags: cmd += ' '+state.martinize_flags
 	bash(cmd,cwd=state.here,log='martinize')
