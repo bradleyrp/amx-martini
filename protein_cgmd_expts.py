@@ -1,7 +1,7 @@
 {
 
 'martinize':{
-'tags':['cgmd','protein'],
+'tags':['cgmd','protein','tag_support','tested_2017.09.14'],
 'script':'scripts/protein.py',
 'params':None,
 'extensions':['@martini/martini.py'],

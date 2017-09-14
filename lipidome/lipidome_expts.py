@@ -6,6 +6,7 @@
 ###
 ##
 #
+'tags':['cgmd','tag_once','tested_2017.09.14'],
 'metarun':[
 {'quick':'clear_lipidome'},
 {'quick':'generate_lipidome_structures'},
@@ -18,6 +19,7 @@
 ###
 ##
 #
+'tags':['cgmd','tag_support','tested_2017.09.14'],
 'quick':"""
 
 from amx import *
@@ -43,7 +45,7 @@ structure drop: inputs/martini/library-lipidome-structs
 ##
 #
 #
-'tags':['cgmd','lipidome'],
+'tags':['cgmd','lipidome','tag_support','tested_2017.09.14'],
 'params':'@bilayers/parameters.py',
 'extensions':[
 	'structlib.py',
@@ -93,7 +95,7 @@ landscape at:  inputs/martini/auto_ff/landscape.json
 ###
 ##
 #
-'tags':['cgmd','lipidome'],
+'tags':['cgmd','lipidome','tag_support','tested_2017.09.14'],
 'params':'@bilayers/parameters.py',
 'extensions':[
 	'structlib.py',
