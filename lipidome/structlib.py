@@ -94,6 +94,7 @@ def generate_simple_structure_via_em(name,itps):
 #---magic for local import when you run from elsewhere
 sys.path.insert(0,os.path.dirname(os.path.relpath(os.path.abspath(__file__),os.getcwd())))
 from structlib_defs import defs_lipids,defs_ptdins,defs_pts_lipids,defs_pts_ptdins
+from structlib_defs import defs_pts_sterols,defs_sterols
 
 def guess_lipid_coords(name,itps):
 	"""
@@ -105,8 +106,8 @@ def guess_lipid_coords(name,itps):
 	#---parse the definitions for lipids only 
 	defs = dict([(group_name,
 		dict([(j[0],j[1:]) for j in [i.split() for i in d.splitlines()] if len(j)>0]))
-		for group_name,d in [('lipids',defs_lipids),('ptdins',defs_ptdins)]])
-	defs_pts = dict([('lipids',defs_pts_lipids),('ptdins',defs_pts_ptdins)])
+		for group_name,d in [('lipids',defs_lipids),('ptdins',defs_ptdins),('sterols',defs_sterols)]])
+	defs_pts = dict([('lipids',defs_pts_lipids),('ptdins',defs_pts_ptdins),('sterols',defs_pts_sterols)])
 	#---select the group for this lipid
 	group_has = [key for key in defs if name in defs[key]]
 	if not group_has: raise Exception('cannot find lipid %s in the definitions'%name)

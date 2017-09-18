@@ -71,7 +71,7 @@ USAGE NOTES:|
 
 #---source ITP with all MARTINI lipids
 itp_source: inputs/martini/martini-sources.ff/martini_v2.0_lipids_all_201506.itp
-molecules: "DOPC DOPS DOPE POP2 POP3 POPI POPC DPPC".split()
+molecules: "DOPC DOPS DOPE POP2 POP3 POPI POPC DPPC CHOL".split()
 
 equilibration: []
 mdp specs:| {'group':'cgmd','mdps':{
@@ -127,15 +127,15 @@ deposit site: inputs/martini/auto_ff                 # where to write new force 
 #---specify transformed force field copies
 wants:|{
 	'martini_upright.ff':{
-		'restraints':{'martini_glycerol':{'z':100},'martini_tails':{'z':100}},
+		'restraints':{'martini_glycerol':{'z':100},'martini_tails':{'z':100},'martini_sterol':{'z':100}},
 		'naming':'same','which':'lipids'
 		},
 	'martini_upright_alt.ff':{
-		'restraints':{'martini_glycerol':{'z':1000}},
+		'restraints':{'martini_glycerol':{'z':1000},'martini_sterol_top':{'z':100}},
 		'naming':'alternate','which':'lipids'
 		},
 	'martini_prison.ff':{
-		'restraints':{'martini_glycerol':{'z':1000},'martini_tails':{'z':1000}},
+		'restraints':{'martini_glycerol':{'z':1000},'martini_tails':{'z':1000},'martini_sterol':{'z':1000}},
 		'naming':'alternate_restrain_both','which':'lipids'
 		},
 	}

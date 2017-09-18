@@ -20,8 +20,8 @@ def transform_itp(itp_fn,specs):
 		for mol in list(itp.molecules.keys()):
 			mol_spec = itp.molecules[mol]
 
-			#---note that the "which":"lipids" checks the tags for each ITP in the meta.json to see if there are
-			#---...any lipids in that ITP (but it might be the combined one, so there are other things)
+			#---note that the "which":"lipids" checks the tags for each ITP in the meta.json to see if there 
+			#---...are any lipids in that ITP (but it might be the combined one, so there are other things)
 			#---...this is why we perform a secondary check here
 
 			#---if which lipids, we check whether this molecule is a lipid
@@ -30,32 +30,57 @@ def transform_itp(itp_fn,specs):
 				index_gl1 = [ii for ii,i in enumerate(mol_spec['atoms']) if i['atom']=='GL1']
 				atoms_tail_1 = [ii for ii,i in enumerate(mol_spec['atoms']) if re.match('^.+A$',i['atom'])]
 				atoms_tail_2 = [ii for ii,i in enumerate(mol_spec['atoms']) if re.match('^.+B$',i['atom'])]
+				#---ensure this discriminates sterols properly
+				is_sterol = mol=='CHOL'
 				is_lipid = any(index_gl1) and any(atoms_tail_1) and any(atoms_tail_2)
 			else: raise Exception('under development')
 			#---if we are  transforming a lipid, apply martini_glycerol and martini_tails restraints
-			if is_lipid:
-				#---we already have tail names, so we get the last one
-				tail_names = [sorted([mol_spec['atoms'][j]['atom'] 
-					for j in k])[-1] for k in [atoms_tail_1,atoms_tail_2]]
+			if is_lipid or is_sterol:
 				#---generate blank restraints
 				posres_custom = {'funct': '1','fcy':'0','ai':'1','fcx':'0','fcz':'0'}
 				#---hard-coding martini naming rules for head and tail atoms
 				posres_all = [dict(posres_custom) for i in range(len(mol_spec['atoms']))]
-				#---apply tail restraints if necessary
-				if 'martini_glycerol' in specs['restraints']:
-					atom_name = 'GL1'
-					atoms = [i['atom'] for i in mol_spec['atoms']]
-					for key,value in specs['restraints']['martini_glycerol'].items():
-						if key not in 'xyz': raise Exception('restraints, martini_glycerol keys must be in xyz')
-						posres_all[atoms.index(atom_name)]['fc%s'%key] = value
-				if 'martini_tails' in specs['restraints']:
-					for atom_name in tail_names: 
+				if not is_sterol:
+					#---we already have tail names, so we get the last one
+					tail_names = [sorted([mol_spec['atoms'][j]['atom'] 
+						for j in k])[-1] for k in [atoms_tail_1,atoms_tail_2]]
+					#---apply tail restraints if necessary
+					if 'martini_glycerol' in specs['restraints']:
+						atom_name = 'GL1'
 						atoms = [i['atom'] for i in mol_spec['atoms']]
 						for key,value in specs['restraints']['martini_glycerol'].items():
-							if key not in 'xyz': raise Exception('restraints, martini_glycerol keys must be in xyz')
+							if key not in 'xyz': 
+								raise Exception('restraints, martini_glycerol keys must be in xyz')
 							posres_all[atoms.index(atom_name)]['fc%s'%key] = value
+					if 'martini_tails' in specs['restraints']:
+						for atom_name in tail_names: 
+							atoms = [i['atom'] for i in mol_spec['atoms']]
+							for key,value in specs['restraints']['martini_glycerol'].items():
+								if key not in 'xyz': 
+									raise Exception('restraints, martini_glycerol keys must be in xyz')
+								posres_all[atoms.index(atom_name)]['fc%s'%key] = value
+				#---off for now
+				elif False:
+					#---! hard-coded MARTINI cholesterol restraints
+					#---! CHECK THIS! IS IT CORRECT?
+					if 'martini_sterol_top' in specs['restraints']:
+						for atom_name in ['ROH','C2']: 
+							atoms = [i['atom'] for i in mol_spec['atoms']]
+							for key,value in specs['restraints']['martini_sterol_top'].items():
+								if key not in 'xyz': 
+									raise Exception('restraints, martini_sterol_top keys must be in xyz')
+								posres_all[atoms.index(atom_name)]['fc%s'%key] = value
+					#---! ONE IF LOOP? OR MANY?
+					if 'martini_sterol' in specs['restraints']:
+						for atom_name in ['ROH','C2']: 
+							atoms = [i['atom'] for i in mol_spec['atoms']]
+							for key,value in specs['restraints']['martini_sterol'].items():
+								if key not in 'xyz': 
+									raise Exception('restraints, martini_sterol_top keys must be in xyz')
+								posres_all[atoms.index(atom_name)]['fc%s'%key] = value
 				#---in some cases we want to restrain both the alternate group and the original
-				#---...so we apply position restraints to the original here, and later copy it to the alternate
+				#---...so we apply position restraints to the original here, and later copy it to 
+				#---...the alternate
 				if specs['naming']=='alternate_restrain_both':
 					itp.molecules[mol]['position_restraints'] = posres_all	
 				if specs['naming']=='same': mol_name = mol
@@ -104,7 +129,9 @@ def topology_maker_martini_restraints():
 
 		#---make sure the meta.json file describes all ITP files in the directory
 		if set(meta.keys())!=set([os.path.basename(i) for i in glob.glob(os.path.join(base_ff,'*.itp'))]):
-			raise Exception('keys in meta.json from base topology %s do not match the itp files there'%base_ff)
+			import ipdb;ipdb.set_trace()
+			raise Exception('keys in meta.json from base topology %s do not match the itp files there'%
+				base_ff)
 
 		#---apply rules to all itps
 		for itp_name in meta.keys():

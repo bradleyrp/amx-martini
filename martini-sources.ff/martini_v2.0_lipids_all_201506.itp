@@ -13997,11 +13997,11 @@ DPSG 1
 [ atoms ]
 ; i type resnr residue atom cgnr charge mass
   1 SP1  1     CHOL    ROH  1    0.0    77.22
-  2 SC1  1     CHOL    R1   2    0.0      0.0
+  2 SC1  1     CHOL    R1   2    0.0 0.0
   3 SC3  1     CHOL    R2   3    0.0    38.69
   4 SC1  1     CHOL    R3   4    0.0   159.65
-  5 SC1  1     CHOL    R4   5    0.0      0.0
-  6 SC1  1     CHOL    R5   6    0.0      0.0
+  5 SC1  1     CHOL    R4   5    0.0 0.0
+  6 SC1  1     CHOL    R5   6    0.0 0.0
   7 SC1  1     CHOL    C1   7    0.0    39.44
   8  C1  1     CHOL    C2   8    0.0     72.0
 
@@ -14040,7 +14040,7 @@ DPSG 1
   4  5  6  7
   5  6  7
   6  7
- 
+
 ;;;;;; Martini lipid topology for cholesteryl oleate
 ;
 ; Description:

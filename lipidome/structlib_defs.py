@@ -86,3 +86,13 @@ changed ptdins lipid atoms named CP to PO4 per martini_v2.0_lipids_all_201506.it
 moved POP2 to POP2.o2 and got the topology manually. only change is C2A->D2A and D3A->C3A
 ditto POP3
 """
+
+defs_pts_sterols =[
+	[0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,5.3,4.5,3.9,3.3,3,2.6,1.4,0,0,0,0,0]]
+
+defs_sterols = """
+CHOL  -   -   -   -   -   -  ROH R1  R2  R3  R4  R5  C1  C2   -   -   -   - 
+ERGO - - - - - - ROH R1 R2 R3 R4 R5 C1 C2 - - - - 
+"""
