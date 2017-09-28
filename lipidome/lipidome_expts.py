@@ -6,7 +6,7 @@
 ###
 ##
 #
-'tags':['cgmd','tag_once','tested_2017.09.14'],
+'tags':['cgmd','tag_prep','tested_2017.09.14'],
 'metarun':[
 {'quick':'clear_lipidome'},
 {'quick':'generate_lipidome_structures'},
