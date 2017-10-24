@@ -86,6 +86,7 @@ sources: ['inputs/martini/martini-sources.ff']
 #---path to deposit gro and itp folders from root
 deposit at:    inputs/martini/library-lipidome-structs
 landscape at:  inputs/martini/auto_ff/landscape.json
+# landscape at is probably deprecated
 
 """},
 

@@ -33,7 +33,7 @@ def straighten_lipid(structure,gro='protein-flat.gro',direction='z',cwd='./'):
 	Assume the first atom should be positive.
 	Heavily adapted from the lipid-handling routine in lib_place_proteins.py.
 	"""
-	struct = amx.GMXStructure(structure)
+	struct = amx.gromacs.GMXStructure(structure)
 	lpts = struct.points
 	#---define the reference axis
 	refaxis = np.zeros(3)
@@ -68,7 +68,7 @@ def generate_simple_structure_via_em(name,itps):
 	"""
 	me = itps.molecules[name]
 	amx.make_step(name)
-	amx.write_mdp()
+	amx.gromacs.mdp.write_mdp()
 	n_atoms = len(me['atoms'])
 	#######coords[:,0] = 0.4*np.arange(n_atoms)
 	coords = np.random.random_sample((n_atoms,3))*0.4
@@ -162,24 +162,3 @@ def martini_lipidome():
 	fns = [guess_lipid_coords(mol,itps) for mol in mols]
 	#---copy paths from assumed step folder numbering (better to be more explicit but this should work)
 	for fn in fns: shutil.copyfile(fn,os.path.join(amx.state.deposit_at,os.path.basename(fn)))
-
-def write_martini_landscape():
-	"""
-	WILL BE REMOVED IN PLACE OF LANDSCAPE OBJECT IN AMX/FFTOOLS ... !!!
-	"""
-	#---note that the following is hardcoded and lipids are autodetected
-	land = {'objects':{},'alias':{}}
-	land['alias']['protein'] = ['GLH','ILE','ALAD','GLUH','GLN','HISH','ASN1','HYP','GLY','HIP',
-		'ARGN','MSE','CYS1','GLU','CYS2','CYS','HISE','ASP','SER','HSD','HSE','PRO','CYX','ASPH',
-		'ORN','HSP','HID','HIE','LYN','DAB','ASN','CYM','HISD','VAL','THR','HISB','HIS','HIS1',
-		'HIS2','TRP','HISA','ACE','ASH','CYSH','PGLU','LYS','PHE','ALA','QLN','MET','LYSH','NME',
-		'LEU','ARG','TYR']
-	#---note that MARTINI generates ION,NA+ (this is handled in lib_place_proteins.detect_composition)
-	land['objects'] = {
-		'NA+':{'charge':1,'is':'ion','parts':['resname'],'ffs':['martini']},
-		'CL-':{'charge':-1,'is':'ion','parts':['resname'],'ffs':['martini']},
-		'W':{'charge':0,'is':'water','parts':['resname'],'ffs':['martini']},}
-	for mol in state.molecules:
-		if mol in land['objects']: raise Exception('molecule %s is already in the landscape'%mol)
-		land['objects'][mol] = {'is':'lipid','parts':['resname'],'ffs':['martini']}
-	with open(state.landscape_at,'w') as fp: fp.write(json.dumps(land))
