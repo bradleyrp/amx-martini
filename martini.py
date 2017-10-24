@@ -33,3 +33,20 @@ def martinize():
 	state.martinize_itps = itps
 	#---register this step with the state for subsequent steps
 	state.protein_prepared = {'gro':state.here+'protein.gro','top':state.here+'protein.top'}
+	#---! how is martinize() used in the bilayer adhesion example, and how does this compare to the water?
+	#---! hardcoded composition for now, for use in protein-water.py
+	state.protein_prepared.update(composition=[('Protein_A',1)])
+
+def fix_martini_ions(structure,gro):
+	"""
+	MARTINI likes to use NA+ and ION but the counterion functions in GROMACS are belligerent.
+	"""
+	struct = GMXStructure(state.here+structure)
+	import numpy as np
+	ions = np.where(struct.residue_names=='NA+')[0]
+	struct.residue_names[ions] = 'ION'
+	struct.atom_names[ions] = 'NA+'
+	ions = np.where(struct.residue_names=='CL-')[0]
+	struct.residue_names[ions] = 'ION'
+	struct.atom_names[ions] = 'CL-'
+	struct.write(state.here+gro)
