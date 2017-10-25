@@ -33,7 +33,7 @@ martinize flags: -ed                                # see martinize.py help/docs
 ###
 ##
 #
-'tags':['cgmd','tag_support'],
+'tags':['cgmd','tag_support','tested_2017.10.24.1700_dev'],
 'script':'scripts/protein-water.py',
 'params':'@bilayers/parameters.py',
 'extensions':['@martini/martini.py'],
@@ -42,8 +42,8 @@ martinize flags: -ed                                # see martinize.py help/docs
 USE NOTES:|
 	This is a support function that should always follow a topology-generate step e.g. "martinize".
 	Note that we get MDP parameters from the bilayer module.
-	Needs: interchangeable water model.
-	It expects the following: ...
+	It receives information from e.g. martinize which loads the state with e.g. protein_prepared.
+	Needs: interchangeable water model, standardized wrapper for a coarse-grained model (a long-term goal)
 
 step: protein                       # name of the folder is s01-protein
 equilibration: nvt-short,nvt,npt    # which equilibration steps to use (requires MDP files from mdp_specs)
@@ -77,9 +77,10 @@ mdp_specs:| {
 ###
 ##
 #
-'tags':['cgmd','dev','tag_structure_repo'],
+'tags':['cgmd','note_structure_repo','tested_2017.10.24.1700_dev'],
 'metarun':[
 {'step':'martinize','do':'martinize','settings':"""
+# note that this test uses a very small starting structure so if you get domain problems, make it bigger
 start structure: @structure-repo/proteins/helix0.pdb
 """},
 {'step':'protein','do':'protein_water_martini','settings':"""

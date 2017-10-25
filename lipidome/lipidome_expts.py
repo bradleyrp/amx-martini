@@ -6,7 +6,7 @@
 ###
 ##
 #
-'tags':['cgmd','tag_prep','tested_2017.09.14'],
+'tags':['cgmd','tag_prelim','tested_2017.09.14'],
 'metarun':[
 {'quick':'clear_lipidome'},
 {'quick':'generate_lipidome_structures'},
@@ -25,7 +25,7 @@
 from amx import *
 import os,shutil,glob
 for fn in (glob.glob(settings.auto_ff+os.sep+'*')+
-	glob.glob(settings.structure_drop)):
+	glob.glob(settings.deposit_at)):
 	if os.path.isdir(fn): shutil.rmtree(fn)
 	else: os.remove(fn)
 if not os.path.isdir(settings.auto_ff): os.mkdir(settings.auto_ff)
@@ -33,7 +33,7 @@ if not os.path.isdir(settings.auto_ff): os.mkdir(settings.auto_ff)
 """,'settings':"""
 
 auto ff: inputs/martini/auto_ff
-structure drop: inputs/martini/library-lipidome-structs
+deposit at: inputs/martini/library-lipidome-structs
 
 """,
 },
@@ -56,7 +56,6 @@ structure drop: inputs/martini/library-lipidome-structs
 from amx import *
 init()
 martini_lipidome()
-write_martini_landscape()
 
 """,
 'settings':"""
