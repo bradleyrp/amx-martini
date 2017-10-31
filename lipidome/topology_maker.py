@@ -16,7 +16,8 @@ def transform_itp(itp_fn,specs):
 	specs_add_restraints = 'which naming restraints'.split()
 	#---each restraints option listing has a different method for changing restraints
 	if set(specs.keys())==set(specs_add_restraints):
-		itp = GMXTopology(itp_fn,defs={'FLEXIBLE':True})
+		###!!!---temporarily changed flexible to false here for MARTINI cholesterol but this needs checked!
+		itp = GMXTopology(itp_fn,defs={'FLEXIBLE':False})
 		for mol in list(itp.molecules.keys()):
 			mol_spec = itp.molecules[mol]
 
