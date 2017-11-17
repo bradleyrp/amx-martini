@@ -5,6 +5,8 @@ import os,glob
 def martinize():
 	"""
 	Use martinize to generate a coarse-grained protein.
+	Note that this is the original implementation, but it has been refined in Multimer.py for more
+	general use-cases.
 	"""
 	name = 'protein'
 	martinize_fn = state.martinize_path
