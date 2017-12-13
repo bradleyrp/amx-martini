@@ -8,16 +8,17 @@ from copy import deepcopy
 #---! put this in a central place
 argsort = lambda seq : [x for x,y in sorted(enumerate(seq), key = lambda x: x[1])]
 
-def transform_itp(itp_fn,specs):
+def transform_itp(itp_fn,specs,**kwargs):
 	"""
 	Modify an ITP file.
 	"""
+	defs = kwargs.pop('defs',{})
+	if kwargs: raise Exception('remaining kwargs %s'%kwargs)
 	#---restraints options listing
 	specs_add_restraints = 'which naming restraints'.split()
 	#---each restraints option listing has a different method for changing restraints
-	if set(specs.keys())==set(specs_add_restraints):
-		###!!!---temporarily changed flexible to false here for MARTINI cholesterol but this needs checked!
-		itp = GMXTopology(itp_fn,defs={'FLEXIBLE':False})
+	if set(specs.keys())>=set(specs_add_restraints):
+		itp = GMXTopology(itp_fn,defs=defs)
 		for mol in list(itp.molecules.keys()):
 			mol_spec = itp.molecules[mol]
 
@@ -139,7 +140,9 @@ def topology_maker_martini_restraints():
 			#---select itps from meta.json tags and the which keyword
 			if specs['which'] in meta[itp_name]:
 				#---modify itp according to rules
-				itp_new = transform_itp(os.path.join(base_ff,itp_name),specs)
+				kwargs = dict()
+				if 'defs' in specs: kwargs.update(defs=specs['defs'])
+				itp_new = transform_itp(os.path.join(base_ff,itp_name),specs,**kwargs)
 				#---the naming scheme only modifies the file internally. it is always rewritten
 				itp_new.write(os.path.join(out_ff_dn,itp_name))
 			#---ignore itps with tags in meta.json that are not equal to specs['which']

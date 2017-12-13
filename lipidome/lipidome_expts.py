@@ -10,7 +10,7 @@
 'metarun':[
 {'quick':'clear_lipidome'},
 {'quick':'generate_lipidome_structures'},
-{'quick':'generate_lipidome_restraints'}
+{'quick':'generate_lipidome_restraints_advanced'}
 ]},
 
 'clear_lipidome':{
@@ -131,6 +131,67 @@ wants:|{
 		'naming':'same','which':'lipids'
 		},
 	'martini_upright_alt.ff':{
+		'restraints':{'martini_glycerol':{'z':1000},'martini_sterol_top':{'z':100}},
+		'naming':'alternate','which':'lipids'
+		},
+	'martini_prison.ff':{
+		'restraints':{'martini_glycerol':{'z':1000},'martini_tails':{'z':1000},'martini_sterol':{'z':1000}},
+		'naming':'alternate_restrain_both','which':'lipids'
+		},
+	}
+
+"""},
+
+'generate_lipidome_restraints_advanced':{
+#####
+####
+###
+##
+#
+'tags':['cgmd','lipidome','tag_support','tested_2017.09.14'],
+'params':'@bilayers/parameters.py',
+'extensions':[
+	'structlib.py',
+	'topology_maker.py',
+	'@extras/geometry_tools/*.py'],
+'quick':"""
+
+from amx import *
+init()
+topology_maker_martini_restraints()
+
+""",
+'settings':"""
+
+USAGE NOTES:|
+	this method is designed to pre-make any lipid restraints you might want
+	its product can be used by 
+		(1) the bilayer maker's vacuum packing
+		(2) the flat bilayer maker's leaflet-specific restraints
+	the "wants" dictionary specifies the outputs and describes their restraints
+	the deposit site holds the automatically generated force fields
+	this method completely avoids using the "define posre" flags in GROMACS
+	all restraints are explicit, but this means you should avoid "define posre" which will restrain water
+	defs have been added to handle ifdef statements inside the ITP (see Ryan's notes for justification)
+	these defs typify the advanced method for generating restraints, which will eventually become standard
+	!!! note: missing DPP2 and CHL1
+
+base force field: inputs/martini/martini-sources.ff  # source force field to modify
+deposit site: inputs/martini/auto_ff                 # where to write new force fields (keys in wants)
+
+#---specify transformed force field copies
+wants:|{
+	'martini_upright.ff':{
+		'restraints':{'martini_glycerol':{'z':100},'martini_tails':{'z':100},'martini_sterol':{'z':100}},
+		'naming':'same','which':'lipids'
+		},
+	'martini_upright_alt.ff':{
+		'defs':{'FLEXIBLE':False},
+		'restraints':{'martini_glycerol':{'z':1000},'martini_sterol_top':{'z':100}},
+		'naming':'alternate','which':'lipids'
+		},
+	'martini_upright_alt_flexible.ff':{
+		'defs':{'FLEXIBLE':True},
 		'restraints':{'martini_glycerol':{'z':1000},'martini_sterol_top':{'z':100}},
 		'naming':'alternate','which':'lipids'
 		},
